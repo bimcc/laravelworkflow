@@ -7,16 +7,12 @@ use Illuminate\Support\Facades\DB;
 
 
 class WorkflowController extends Controller {
-    public function __construct()
-    {
-        $this->work = new workflow();
-		}
     /**
 	 	* 流程设计首页
 	 	* @param $map 查询参数
 		*/
     public function wfindex(Request $request){
-        $list = $this->work->FlowApi('List');
+        $list = Workflow::FlowApi('List');
 				$type = ['news'=>'新闻信息','cnt'=>'合同信息','paper'=>'证件信息','null'=>'尚未选择',''=>'尚未选择'];
         return  view('wf.index',['list'=>$list,'type'=>$type]);
     }
@@ -27,11 +23,11 @@ class WorkflowController extends Controller {
         if($flow_id<=0){
             return response()->json('参数有误，请返回重试!');
 				}
-        $one = $this->work->FlowApi('GetFlowInfo',$flow_id);
+        $one = Workflow::FlowApi('GetFlowInfo',$flow_id);
         if(!$one){
             return response()->json('未找到数据，请返回重试!');
         }
-				return view('wf.desc',['one'=>$one,'process_data'=>$this->work->ProcessApi('All',$flow_id)]);
+				return view('wf.desc',['one'=>$one,'process_data'=>Workflow::ProcessApi('All',$flow_id)]);
     }
     /**
 	 * 流程添加
@@ -44,7 +40,7 @@ class WorkflowController extends Controller {
 				}
 				$data['uid']=session('uid');
 				$data['add_time']=time();
-				$ret= $this->work->FlowApi('AddFlow',$data);
+				$ret= Workflow::FlowApi('AddFlow',$data);
 				if($ret['code']==0){
 						return $this->msg_return('发布成功！');
 				}else{
@@ -58,7 +54,7 @@ class WorkflowController extends Controller {
 	{
 			if ($request->method() == 'POST') {
 				$data = $request->all();
-				$ret= $this->work->FlowApi('EditFlow',$data);
+				$ret= Workflow::FlowApi('EditFlow',$data);
 				if($ret['code']==0){
 						return $this->msg_return('修改成功！');
 				}else{
@@ -68,7 +64,7 @@ class WorkflowController extends Controller {
 			$data = [];
 			$data['id'] = $id;
 			if($id){
-					$data['info'] = $this->work->FlowApi('GetFlowInfo',$id);
+					$data['info'] = Workflow::FlowApi('GetFlowInfo',$id);
 			}
 			$data['type'] = ['news'=>'新闻信息','cnt'=>'合同信息','paper'=>'证件信息'];
 			return view('wf.add',$data);
@@ -79,7 +75,7 @@ class WorkflowController extends Controller {
 	public function wfchange(Request $request,$id=0,$status=0)
 	{
 			$data = ['id'=>$id,'status'=>$status];
-			$ret= $this->work->FlowApi('EditFlow',$data);
+			$ret= Workflow::FlowApi('EditFlow',$data);
 			if($ret['code']==0){
 					return response()->json('操作成功');
 			}else{
@@ -92,11 +88,11 @@ class WorkflowController extends Controller {
 	 **/
    public function delete_process(Request $request)
     {
-		return response()->json($this->work->ProcessApi('ProcessDel',$request->get('flow_id'),$request->get('process_id')));
+		return response()->json(Workflow::ProcessApi('ProcessDel',$request->get('flow_id'),$request->get('process_id')));
     }
 	public function del_allprocess(Request $request)
 	{
-		return response()->json($this->work->ProcessApi('ProcessDelAll',$request->get('flow_id')));
+		return response()->json(Workflow::ProcessApi('ProcessDelAll',$request->get('flow_id')));
 	}
 	/**
 	 * 添加流程
@@ -104,23 +100,23 @@ class WorkflowController extends Controller {
     public function add_process(Request $request)
     {
         $flow_id = $request->get('flow_id',0);
-        $one = $this->work->FlowApi('GetFlowInfo',$flow_id);
+        $one = Workflow::FlowApi('GetFlowInfo',$flow_id);
         if(!$one){
           return response()->json(['status'=>0,'msg'=>'添加失败,未找到流程','info'=>'']);
         }
-				return response()->json($this->work->ProcessApi('ProcessAdd',$flow_id));
+				return response()->json(Workflow::ProcessApi('ProcessAdd',$flow_id));
     }
     /**
 	 * 保存布局
 	 **/
     public function save_canvas(Request $request)
     {
-				return response()->json($this->work->ProcessApi('ProcessLink',$request->get('flow_id'),$request->get('process_info')));
+				return response()->json(Workflow::ProcessApi('ProcessLink',$request->get('flow_id'),$request->get('process_info')));
     }
     //右键属性
     public function wfatt(Request $request)
     {
-	    	$info = $this->work->ProcessApi('ProcessAttView',$request->get('id',0));
+	    	$info = Workflow::ProcessApi('ProcessAttView',$request->get('id',0));
 	    	$data['op'] = $info['show'];
         $data['one'] = $info['info'];
 				$data['from'] = $info['from'];
@@ -132,7 +128,7 @@ class WorkflowController extends Controller {
     public function save_attribute(Request $request)
     {
 	    $data = $request->all();
-			return response()->json($this->work->ProcessApi('ProcessAttSave',$data['process_id'],$data));
+			return response()->json(Workflow::ProcessApi('ProcessAttSave',$data['process_id'],$data));
     }
    
 	//用户选择控件
@@ -162,7 +158,7 @@ class WorkflowController extends Controller {
 		/*流程监控*/
 		public function wfjk($map = [])
 		{
-				$data['list'] = $this->work->worklist();
+				$data['list'] = Workflow::worklist();
 				return view('wf.wfjk',$data);
 		}
 	
@@ -177,7 +173,7 @@ class WorkflowController extends Controller {
 							break;
 						case 1:
 								$st = 0;
-								$flowinfo =  $this->work->workflowInfo($wf_fid,$wf_type,['uid'=>session('uid'),'role'=>session('role')]);
+								$flowinfo =  Workflow::workflowInfo($wf_fid,$wf_type,['uid'=>session('uid'),'role'=>session('role')]);
 			
 						if($flowinfo!=-1){
 								$user = explode(",", $flowinfo['status']['sponsor_ids']);
@@ -237,7 +233,7 @@ class WorkflowController extends Controller {
 	public function wfstart(Request $request)
 	{
 		$info = ['wf_type'=>$request->get('wf_type'),'wf_title'=>$request->get('wf_title'),'wf_fid'=>$request->get('wf_fid')];
-		$flow =  $this->work->getWorkFlow($request->get('wf_type'));
+		$flow =  Workflow::getWorkFlow($request->get('wf_type'));
 		$data['flow'] = $flow;
 		$data['info'] = $info;
 		return view('wf.wfstart',$data);
@@ -246,7 +242,7 @@ class WorkflowController extends Controller {
 	public function start_save(Request $request)
 	{
 		$data = $request->all();
-		$flow = $this->work->startworkflow($data,session('uid'));
+		$flow = Workflow::startworkflow($data,session('uid'));
 		if($flow['code']==1){
 			return $this->msg_return('Success!');
 		}
@@ -257,24 +253,24 @@ class WorkflowController extends Controller {
 		$info = ['wf_title'=>$request->get('wf_title'),'wf_fid'=>$request->get('wf_fid'),'wf_type'=>$request->get('wf_type')];
 		$info = json_decode(json_encode($info,true));
 		$data['info'] = $info;
-		$data['flowinfo'] = $this->work->workflowInfo($request->get('wf_fid'),$request->get('wf_type'),['uid'=>session('uid'),'role'=>session('role')]);
+		$data['flowinfo'] = Workflow::workflowInfo($request->get('wf_fid'),$request->get('wf_type'),['uid'=>session('uid'),'role'=>session('role')]);
 		$data['flowinfo'] = json_decode(json_encode($data['flowinfo'],true));
 		return view('wf.check',$data);
 	}
 	public function do_check_save(Request $request)
 	{
 		$data = $request->all();
-		$this->work->workdoaction($data,session('uid'));
+		Workflow::workdoaction($data,session('uid'));
 		return $this->msg_return('Success!');
 	}
 	public function ajax_back(Request $request){
-		$flowinfo =  $this->work->getprocessinfo($request->get('back_id'),$request->get('run_id'));
+		$flowinfo =  Workflow::getprocessinfo($request->get('back_id'),$request->get('run_id'));
 		return response()->json($flowinfo);
 	}
 	public function Checkflow(Request $request)
 	{
 		$fid = $request->get('fid',0);
-		return $this->work->SuperApi('CheckFlow',$fid);
+		return Workflow::SuperApi('CheckFlow',$fid);
 	}
 	
 	 public function wfup(Request $request)
@@ -284,7 +280,7 @@ class WorkflowController extends Controller {
 	
 	public function wfend(Request $request)
 	{
-		$this->work->SuperApi('WfEnd',$request->get('id'),session('uid'));
+		Workflow::SuperApi('WfEnd',$request->get('id'),session('uid'));
 		return $this->msg_return('Success!');
 	}
 	public function wfupsave(Request $request)

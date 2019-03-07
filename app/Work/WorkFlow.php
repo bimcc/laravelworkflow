@@ -20,7 +20,7 @@ use App\Work\Repositories\UserRepo;
 
 
 	
-class workflow{
+class Workflow{
     /**
      * 根据业务类别获取工作流
      *

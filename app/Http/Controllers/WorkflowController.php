@@ -176,8 +176,9 @@ class WorkflowController extends Controller {
 								$flowinfo =  Workflow::workflowInfo($wf_fid,$wf_type,['uid'=>session('uid'),'role'=>session('role')]);
 			
 						if($flowinfo!=-1){
-								$user = explode(",", $flowinfo['status']['sponsor_ids']);
 								if($flowinfo['sing_st']==0){
+									$user = explode(",", $flowinfo['status']['sponsor_ids']);
+
 										if($flowinfo['status']['auto_person']==3||$flowinfo['status']['auto_person']==4){
 												if (in_array(session('uid'), $user)) {
 														$st = 1;

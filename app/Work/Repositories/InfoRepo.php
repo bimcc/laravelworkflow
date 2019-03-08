@@ -212,14 +212,15 @@ class InfoRepo{
 					$workflow ['log'] = ProcessRepo::runLog($wf_fid,$wf_type);
 					if($result['is_sing']==1){
 						$info = RunProcess::where('run_id',$result['id'])->where('run_flow',$result['flow_id'])->where('run_flow_process',$result['run_flow_process'])->get();
-					   $workflow ['sing_st'] = 1;
-					   $workflow ['flow_process'] = $result['run_flow_process'];
-					   $process = ProcessRepo::getProcessInfo($result['run_flow_process']);
-					   $workflow ['status']['wf_mode'] = $process['wf_mode'];
-					   $workflow ['nexprocess'] = ProcessRepo::getNexProcessInfo($wf_type,$wf_fid,$result['run_flow_process']);
-					   $workflow ['process'] = $process;
-					   $workflow ['run_process'] = $info['id'];
-					   $workflow ['sing_info'] = RunSign::find($result['sing_id']);
+					   	$workflow ['sing_st'] = 1;
+						$workflow ['flow_process'] = $result['run_flow_process'];
+						$process = ProcessRepo::getProcessInfo($result['run_flow_process']);
+						$workflow ['status']['wf_mode'] = $process['wf_mode'];
+						$workflow ['status']['wf_action'] = $process['wf_action'];
+						$workflow ['nexprocess'] = ProcessRepo::getNexProcessInfo($wf_type,$wf_fid,$result['run_flow_process']);
+						$workflow ['process'] = $process;
+						$workflow ['run_process'] = $info['id'];
+						$workflow ['sing_info'] = RunSign::find($result['sing_id']);
 					}
 			} else {
 				$workflow ['bill_check'] = '';

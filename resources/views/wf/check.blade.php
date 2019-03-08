@@ -91,11 +91,15 @@
 				<td colspan=2 class='text-c'>
 				<input id='submit_to_save' name='submit_to_save' value='' type='hidden'>
 				<input id='upload' name='art' value='' type='hidden'>
-				<input  name='sing_st' value='{$flowinfo.sing_st}' type='hidden'>
+				<input  name='sing_st' value='{{$flowinfo->sing_st}}' type='hidden'>
 				@if($flowinfo->sing_st == 0)
 					<a class="btn btn-primary radius" id='nexbton' onclick='tj("ok")' >提交</a> 
+					@if($flowinfo->process['is_back'] == 2)
 					<a class="btn btn-primary radius" id='backbton' onclick='tj("back")'value='back' >回退</a> 
+					@endif
+					@if($flowinfo->process['is_sing'] == 1)
 					<a class="btn btn-primary radius" id='singbton' onclick='tj("sing")' value='sing' >会签</a>
+					@endif
                     <a class="btn btn-primary radius" id='bupload'onclick="layer_show('上传','{{url('wfup', ['id' => 'upload'])}}','140','160')">附件</a> 
                 @else
 					<a class="btn btn-primary radius" id='nexbton' onclick='sing("sok")' >会签提交</a> 

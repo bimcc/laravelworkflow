@@ -186,11 +186,13 @@ class ProcessRepo{
 	 */
 	public static function runLog($wf_fid,$wf_type) 
 	{
+		$type = ['Send'=>'流程发起','ok'=>'同意提交','Back'=>'退回修改','SupEnd'=>'终止流程','Sing'=>'会签提交','sok'=>'会签同意','SingBack'=>'会签退回','SingSing'=>'会签再会签'];
 		$run_log = RunLog::where('from_id',$wf_fid)->where('from_table',$wf_type)->get();
 		foreach($run_log as $k=>$v)
         {
 			$user = User::find($v['uid']);
 			$run_log[$k]['user'] = $user->username;
+			$run_log[$k]['btn'] =$type[$v['btn']] ?? '';
         }
 		return $run_log;
 	}

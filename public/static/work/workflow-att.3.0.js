@@ -194,6 +194,7 @@
                 oObj.removeChild(oObj.options[i]);
                 i--;
             }
+					check_from();
         }
     }
     function fnClearCon(id){

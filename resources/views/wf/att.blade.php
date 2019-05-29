@@ -190,4 +190,8 @@ $(function(){
             }
         });
 });
+var wf_mode = "@isset($one->wf_mode){{$one->wf_mode}}@endisset";
+if(wf_mode){
+	check_from();
+}
 </script>

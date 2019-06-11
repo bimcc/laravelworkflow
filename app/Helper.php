@@ -1,7 +1,7 @@
 <?php
 namespace App;
 
-use App\Work\workflow;
+use App\Work\Workflow;
 
 
 class Helper {
@@ -25,7 +25,7 @@ class Helper {
 
     public static function btn($wf_fid,$wf_type,$status)
     {
-        $work = new workflow();
+        $work = new Workflow();
         $url = "/wf/wfcheck?wf_type={$wf_type}&wf_title=2&wf_fid={$wf_fid}";
         $url_star = "/wf/wfstart?wf_type={$wf_type}&wf_title=2&wf_fid={$wf_fid}";
         switch ($status)

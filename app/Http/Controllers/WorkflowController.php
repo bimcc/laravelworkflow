@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Work\workflow;
+use App\Work\Workflow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
